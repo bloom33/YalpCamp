@@ -23,6 +23,10 @@ app.set("view engine", "ejs");
 //set so Express is directed automatically to render ejs templates from the views folder
 app.set("views", path.join(__dirname, "views"));
 
+//Command Express to parse the body of the request form so that its contents can be rendered
+app.use(express.urlencoded({ extended: true }));
+
+//CRUD ROUTES START HERE!!***//
 app.get("/", (req, res) => {
   res.render("Home");
 });
@@ -33,6 +37,19 @@ app.get("/campgrounds", async (req, res) => {
   const campgrounds = await Campground.find({});
   //renders index.ejs page and passes campgrounds values to index.ejs
   res.render("campgrounds/index", { campgrounds });
+});
+
+//remember: don't need an async callback for creating a new item since there is nothing to wait for beforehand
+//NOTE!: The create route needs to come BEFORE the show route, otherwise the server will search - and not find - an item with the id of 'new'
+app.get("/campgrounds/new", (req, res) => {
+  res.render("campgrounds/new");
+});
+
+//End point route to submit 'new campground' form to
+app.post("/campgrounds", async (req, res) => {
+  const campground = new Campground(req.body.campground);
+  await campground.save();
+  res.redirect(`/campgrounds/${campground._id}`);
 });
 
 //routes to details page of a specific campground
