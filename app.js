@@ -25,9 +25,9 @@ app.set("view engine", "ejs");
 //set so Express is directed automatically to render ejs templates from the views folder
 app.set("views", path.join(__dirname, "views"));
 
-//Command Express to parse the body of the request form so that its contents can be rendered
+//Express middleware function used to parse the body of the form so that its contents can be input into the request object so it can be used as a JS object
 app.use(express.urlencoded({ extended: true }));
-//Command Express to use method-override and perform the request denoted/labeled in the query string by the string provided - i.e. '_method'.
+//Express middleware assigning method-override to perform the request denoted/labeled in the query string by the string provided - i.e. '_method'.
 app.use(methodOverride("_method"));
 
 //***CRUD ROUTES START HERE!!***//
