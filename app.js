@@ -6,6 +6,8 @@ const app = express();
 const path = require("path");
 //"import"/require mongoose
 const mongoose = require("mongoose");
+//require method-override in order to send patch, put, delete reuquest routes
+const methodOverride = require("method-override");
 //require Campground
 const Campground = require("./models/campground");
 
@@ -25,8 +27,10 @@ app.set("views", path.join(__dirname, "views"));
 
 //Command Express to parse the body of the request form so that its contents can be rendered
 app.use(express.urlencoded({ extended: true }));
+//Command Express to use method-override and perform the request denoted/labeled in the query string by the string provided - i.e. '_method'.
+app.use(methodOverride("_method"));
 
-//CRUD ROUTES START HERE!!***//
+//***CRUD ROUTES START HERE!!***//
 app.get("/", (req, res) => {
   res.render("Home");
 });
@@ -47,6 +51,7 @@ app.get("/campgrounds/new", (req, res) => {
 
 //End point route to submit 'new campground' form to
 app.post("/campgrounds", async (req, res) => {
+  //The new campground created will be populated by the values input in the body of the form
   const campground = new Campground(req.body.campground);
   await campground.save();
   res.redirect(`/campgrounds/${campground._id}`);
@@ -57,6 +62,24 @@ app.get("/campgrounds/:id", async (req, res) => {
   // need to look up / find the selected camprgound by id
   const campground = await Campground.findById(req.params.id);
   res.render("campgrounds/show", { campground });
+});
+
+//routes to edit page of a specific campground
+app.get("/campgrounds/:id/edit", async (req, res) => {
+  // need to look up / find the selected camprgound by id
+  const campground = await Campground.findById(req.params.id);
+  res.render("campgrounds/edit", { campground });
+});
+
+app.put("/campgrounds/:id", async (req, res) => {
+  //Grab the id to pass into findByIdAndUpdate function
+  const { id } = req.params;
+  //Note: when using findByIdAndUpdate(), remember to pass in two parameters: the id of the item being updated - and - the properties being updated
+  //Use the spread operator to populate campground item with the values from the form which match the respective keys located in the item object
+  const campground = await Campground.findByIdAndUpdate(id, {
+    ...req.body.campground,
+  });
+  res.redirect(`/campgrounds/${campground.id}`);
 });
 
 //testing code

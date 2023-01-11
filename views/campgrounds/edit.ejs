@@ -5,20 +5,22 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create New Campground Page</title>
+    <title>Edit Campground Page</title>
 </head>
 
 <body>
-    <h1>Create New Camp</h1>
-    <form action="/campgrounds" method="POST">
+    <h1>Edit Campground</h1>
+
+    <form action="/campgrounds/<%=campground._id%>?_method=PUT" method="POST">
         <div>
             <label for="titile">Title</label>
-            <input type="text" name="campground[title]" id="titile" placeholder="">
+            <input type="text" name="campground[title]" id="titile" value="<%=campground.title%>">
         </div>
 
         <div>
             <label for="location">Location</label>
-            <input type="text" name="campground[location]" id="location" placeholder="city, state">
+            <input type="text" name="campground[location]" id="location" value="<%= campground.location%>"
+                placeholder="city, state">
         </div>
 
         <div>
@@ -31,12 +33,10 @@
             <input type="text" name="campground[description]" id="description">
         </div>
 
-        <button>Add Campground</button>
+        <button>Submit Changes</button>
     </form>
 
-    <a href=" /campgrounds">All Campgrounds</a>
-
-
+    <a href="/campgrounds/">Back to Campgrounds</a>
 
 </body>
 
