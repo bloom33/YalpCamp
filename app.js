@@ -27,10 +27,19 @@ app.get("/", (req, res) => {
   res.render("Home");
 });
 
+//routes to display Camprounds index page / list of campgrounds
 app.get("/campgrounds", async (req, res) => {
   // assign function which will find all campgrounds to a variable
   const campgrounds = await Campground.find({});
+  //renders index.ejs page and passes campgrounds values to index.ejs
   res.render("campgrounds/index", { campgrounds });
+});
+
+//routes to details page of a specific campground
+app.get("/campgrounds/:id", async (req, res) => {
+  // need to look up / find the selected camprgound by id
+  const campground = await Campground.findById(req.params.id);
+  res.render("campgrounds/show", { campground });
 });
 
 //testing code
