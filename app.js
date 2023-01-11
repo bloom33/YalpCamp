@@ -71,6 +71,7 @@ app.get("/campgrounds/:id/edit", async (req, res) => {
   res.render("campgrounds/edit", { campground });
 });
 
+//post edited camprgound route
 app.put("/campgrounds/:id", async (req, res) => {
   //Grab the id to pass into findByIdAndUpdate function
   const { id } = req.params;
@@ -80,6 +81,14 @@ app.put("/campgrounds/:id", async (req, res) => {
     ...req.body.campground,
   });
   res.redirect(`/campgrounds/${campground.id}`);
+});
+
+//Delete route
+app.delete("/campgrounds/:id", async (req, res) => {
+  //Grab the id to pass into findByIdAndUpdate function
+  const { id } = req.params;
+  await Campground.findByIdAndDelete(id);
+  res.redirect("/campgrounds");
 });
 
 //testing code
