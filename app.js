@@ -8,6 +8,8 @@ const path = require("path");
 const mongoose = require("mongoose");
 //require method-override in order to send patch, put, delete reuquest routes
 const methodOverride = require("method-override");
+//import ejs-mate (to use boilerplate template)
+const ejsMate = require("ejs-mate");
 //require Campground
 const Campground = require("./models/campground");
 
@@ -24,6 +26,8 @@ main().catch((err) => console.log(err));
 app.set("view engine", "ejs");
 //set so Express is directed automatically to render ejs templates from the views folder
 app.set("views", path.join(__dirname, "views"));
+//Tells Express to use ejs-mate engine instead of its default
+app.engine("ejs", ejsMate);
 
 //Express middleware function used to parse the body of the form so that its contents can be input into the request object so it can be used as a JS object
 app.use(express.urlencoded({ extended: true }));
