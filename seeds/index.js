@@ -32,9 +32,14 @@ const seedDB = async () => {
   //Loop through array in cities.js at random and assign the city and state which matches the random number as the value to the location key in a newly created camp
   for (let i = 0; i < 50; i++) {
     const random1000 = Math.floor(Math.random() * 1000);
+    const price = Math.floor(Math.random() * 20) + 10;
     const camp = new Campground({
       title: `${randomTitle(descriptors)} ${randomTitle(places)}`,
       location: `${cities[random1000].city}, ${cities[random1000].state}`,
+      image: "https://source.unsplash.com/collection/483251",
+      description:
+        " Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam minus optio temporibus explicabo unde! Assumenda accusantium eius ab, reiciendis molestias officiis iusto recusandae, excepturi aut a mollitia voluptate. Quas, fugiat? Quod perspiciatis ea veritatis, mollitia praesentium porro inventore nemo cum! Porro eligendi sapiente delectus eum aspernatur nisi beatae, architecto rem, soluta quia officia. Exercitationem recusandae illo corrupti dignissimos labore ea?",
+      price: price,
     });
     //save the newly created camp AFTER its newly assigned values of city and state are created in the loop function above
     await camp.save();
