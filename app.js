@@ -12,6 +12,10 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 //require Campground
 const Campground = require("./models/campground");
+//require ExpressError
+const ExpressError = require("./utilities/ExpressError");
+//require wrapAsync
+const wrapAsync = require("./utilities/wrapAsync");
 
 //Getting default connection to MongoDB
 async function main() {
@@ -40,12 +44,15 @@ app.get("/", (req, res) => {
 });
 
 //routes to display Camprounds index page / list of campgrounds
-app.get("/campgrounds", async (req, res) => {
-  // assign function which will find all campgrounds to a variable
-  const campgrounds = await Campground.find({});
-  //renders index.ejs page and passes campgrounds values to index.ejs
-  res.render("campgrounds/index", { campgrounds });
-});
+app.get(
+  "/campgrounds",
+  wrapAsync(async (req, res) => {
+    // assign function which will find all campgrounds to a variable
+    const campgrounds = await Campground.find({});
+    //renders index.ejs page and passes campgrounds values to index.ejs
+    res.render("campgrounds/index", { campgrounds });
+  })
+);
 
 //remember: don't need an async callback for creating a new item since there is nothing to wait for beforehand
 //NOTE!: The create route needs to come BEFORE the show route, otherwise the server will search - and not find - an item with the id of 'new'
@@ -54,45 +61,65 @@ app.get("/campgrounds/new", (req, res) => {
 });
 
 //End point route to submit 'new campground' form to
-app.post("/campgrounds", async (req, res) => {
-  //The new campground created will be populated by the values input in the body of the form
-  const campground = new Campground(req.body.campground);
-  await campground.save();
-  res.redirect(`/campgrounds/${campground._id}`);
-});
+app.post(
+  "/campgrounds",
+  wrapAsync(async (req, res, next) => {
+    //The new campground created will be populated by the values input in the body of the form
+    const campground = new Campground(req.body.campground);
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
+  })
+);
 
 //routes to details page of a specific campground
-app.get("/campgrounds/:id", async (req, res) => {
-  // need to look up / find the selected camprgound by id
-  const campground = await Campground.findById(req.params.id);
-  res.render("campgrounds/show", { campground });
-});
+app.get(
+  "/campgrounds/:id",
+  wrapAsync(async (req, res) => {
+    // need to look up / find the selected camprgound by id
+    const campground = await Campground.findById(req.params.id);
+    res.render("campgrounds/show", { campground });
+  })
+);
 
 //routes to edit page of a specific campground
-app.get("/campgrounds/:id/edit", async (req, res) => {
-  // need to look up / find the selected camprgound by id
-  const campground = await Campground.findById(req.params.id);
-  res.render("campgrounds/edit", { campground });
-});
+app.get(
+  "/campgrounds/:id/edit",
+  wrapAsync(async (req, res) => {
+    // need to look up / find the selected camprgound by id
+    const campground = await Campground.findById(req.params.id);
+    res.render("campgrounds/edit", { campground });
+  })
+);
 
 //post edited camprgound route
-app.put("/campgrounds/:id", async (req, res) => {
-  //Grab the id to pass into findByIdAndUpdate function
-  const { id } = req.params;
-  //Note: when using findByIdAndUpdate(), remember to pass in two parameters: the id of the item being updated - and - the properties being updated
-  //Use the spread operator to populate campground item with the values from the form which match the respective keys located in the item object
-  const campground = await Campground.findByIdAndUpdate(id, {
-    ...req.body.campground,
-  });
-  res.redirect(`/campgrounds/${campground.id}`);
-});
+app.put(
+  "/campgrounds/:id",
+  wrapAsync(async (req, res) => {
+    //Grab the id to pass into findByIdAndUpdate function
+    const { id } = req.params;
+    //Note: when using findByIdAndUpdate(), remember to pass in two parameters: the id of the item being updated - and - the properties being updated
+    //Use the spread operator to populate campground item with the values from the form which match the respective keys located in the item object
+    const campground = await Campground.findByIdAndUpdate(id, {
+      ...req.body.campground,
+    });
+    res.redirect(`/campgrounds/${campground.id}`);
+  })
+);
 
 //Delete route
-app.delete("/campgrounds/:id", async (req, res) => {
-  //Grab the id to pass into findByIdAndUpdate function
-  const { id } = req.params;
-  await Campground.findByIdAndDelete(id);
-  res.redirect("/campgrounds");
+app.delete(
+  "/campgrounds/:id",
+  wrapAsync(async (req, res) => {
+    //Grab the id to pass into findByIdAndUpdate function
+    const { id } = req.params;
+    await Campground.findByIdAndDelete(id);
+    res.redirect("/campgrounds");
+  })
+);
+
+//Catch all error route ORDER = IMPORTANT!
+app.use((err, req, res, next) => {
+  res.send("No, something went wrong!");
 });
 
 //testing code
