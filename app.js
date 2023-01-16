@@ -117,9 +117,19 @@ app.delete(
   })
 );
 
+//For EVERY SINGLE request. ORDER = IMPORTANT!
+app.all("*", (req, res, next) => {
+  next(new ExpressError("Page Not Found", 404));
+  // res.send("404!!");
+});
+
 //Catch all error route ORDER = IMPORTANT!
 app.use((err, req, res, next) => {
-  res.send("No, something went wrong!");
+  //descrtucture from err
+  const { status = 500, message = "Something went wrong!" } = err;
+  // res.sendStatus(status).send(message);
+  res.send(status).send(message);
+  // res.send("No, something went wrong!");
 });
 
 //testing code
