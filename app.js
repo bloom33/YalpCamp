@@ -117,7 +117,7 @@ app.delete(
   })
 );
 
-//For EVERY SINGLE request. ORDER = IMPORTANT!
+//For EVERY SINGLE/path request. ORDER = IMPORTANT!
 app.all("*", (req, res, next) => {
   next(new ExpressError("Page Not Found", 404));
   // res.send("404!!");
@@ -125,7 +125,7 @@ app.all("*", (req, res, next) => {
 
 //Catch all error route ORDER = IMPORTANT!
 app.use((err, req, res, next) => {
-  //descrtucture from err
+  //destructure from err
   const { status = 500, message = "Something went wrong!" } = err;
   // res.sendStatus(status).send(message);
   res.send(status).send(message);
