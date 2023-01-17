@@ -64,6 +64,8 @@ app.get("/campgrounds/new", (req, res) => {
 app.post(
   "/campgrounds",
   wrapAsync(async (req, res, next) => {
+    if (!req.body.campground)
+      throw new ExpressError("Invalid Campground Data", 400);
     //The new campground created will be populated by the values input in the body of the form
     const campground = new Campground(req.body.campground);
     await campground.save();
@@ -120,16 +122,13 @@ app.delete(
 //For EVERY SINGLE/path request. ORDER = IMPORTANT!
 app.all("*", (req, res, next) => {
   next(new ExpressError("Page Not Found", 404));
-  // res.send("404!!");
 });
 
 //Catch all error route ORDER = IMPORTANT!
 app.use((err, req, res, next) => {
   //destructure from err
   const { status = 500, message = "Something went wrong!" } = err;
-  // res.sendStatus(status).send(message);
-  res.send(status).send(message);
-  // res.send("No, something went wrong!");
+  res.status(status).send(message);
 });
 
 //testing code
