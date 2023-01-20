@@ -38,12 +38,12 @@ app.use(express.urlencoded({ extended: true }));
 //Express middleware assigning method-override to perform the request denoted/labeled in the query string by the string provided - i.e. '_method'.
 app.use(methodOverride("_method"));
 
-//***CRUD ROUTES START HERE!!***//
+//***CAMPGROUND ROUTES START HERE!!***//
 app.get("/", (req, res) => {
   res.render("Home");
 });
 
-//routes to display Camprounds index page / list of campgrounds
+//route to display Camprounds index page / list of campgrounds
 app.get(
   "/campgrounds",
   wrapAsync(async (req, res) => {
@@ -63,7 +63,7 @@ app.get("/campgrounds/new", (req, res) => {
 //End point route to submit 'new campground' form to
 app.post(
   "/campgrounds",
-  wrapAsync(async (req, res, next) => {
+  wrapAsync(async (req, res) => {
     if (!req.body.campground)
       throw new ExpressError("Invalid Campground Data", 400);
     //The new campground created will be populated by the values input in the body of the form
@@ -126,8 +126,10 @@ app.all("*", (req, res, next) => {
 
 //Catch all error route ORDER = IMPORTANT!
 app.use((err, req, res, next) => {
+  console.log("******************** err:", err);
   //destructure from err
   const { status = 500, message = "Something went wrong!" } = err;
+  console.log(status, message);
   res.status(status).send(message);
 });
 
