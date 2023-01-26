@@ -134,8 +134,7 @@ app.use((err, req, res, next) => {
   //transfered error message and it's value OUT of destructuring in order to pass it on as a variable to error.ejs
   if (!err.message) err.message = "Something went wrong!";
   // console.log(status, message);
-  res.status(status);
-  res.render("error", { err });
+  res.status(status).render("error", { err });
 });
 
 //testing code
