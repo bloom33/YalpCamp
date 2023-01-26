@@ -16,6 +16,7 @@ const Campground = require("./models/campground");
 const ExpressError = require("./utilities/ExpressError");
 //require wrapAsync
 const wrapAsync = require("./utilities/wrapAsync");
+// const { validate } = require("./models/campground");
 
 //Getting default connection to MongoDB
 async function main() {
@@ -26,6 +27,7 @@ async function main() {
 //catch any errors with connecting to mongoose
 main().catch((err) => console.log(err));
 
+//*** EJS SETUP ***/
 //so Express can read and render ejs syntax
 app.set("view engine", "ejs");
 //set so Express is directed automatically to render ejs templates from the views folder
@@ -33,12 +35,13 @@ app.set("views", path.join(__dirname, "views"));
 //Tells Express to use ejs-mate engine instead of its default
 app.engine("ejs", ejsMate);
 
-//Express middleware function used to parse the body of the form so that its contents can be input into the request object so it can be used as a JS object
+//*** EXPRESS MIDDLEWARE ***/
+//Function used to parse the request body/req.body of the form so that its contents can be input into the request object so it can be used as a JS object
 app.use(express.urlencoded({ extended: true }));
-//Express middleware assigning method-override to perform the request denoted/labeled in the query string by the string provided - i.e. '_method'.
+//Function assigning method-override to perform the request denoted/labeled in the query string by the string provided - i.e. '_method'.
 app.use(methodOverride("_method"));
 
-//***CAMPGROUND ROUTES START HERE!!***//
+//*** CAMPGROUND ROUTES START HERE! !***//
 app.get("/", (req, res) => {
   res.render("Home");
 });
@@ -65,7 +68,7 @@ app.post(
   "/campgrounds",
   wrapAsync(async (req, res) => {
     if (!req.body.campground)
-      throw new ExpressError("Invalid Campground Data", 400);
+      throw new ExpressError(400, "Invalid Campground Data");
     //The new campground created will be populated by the values input in the body of the form
     const campground = new Campground(req.body.campground);
     await campground.save();
@@ -121,16 +124,18 @@ app.delete(
 
 //For EVERY SINGLE/path request. ORDER = IMPORTANT!
 app.all("*", (req, res, next) => {
-  next(new ExpressError("Page Not Found", 404));
+  next(new ExpressError(404, "Page Not Found"));
 });
 
 //Catch all error route ORDER = IMPORTANT!
 app.use((err, req, res, next) => {
-  console.log("******************** err:", err);
   //destructure from err
-  const { status = 500, message = "Something went wrong!" } = err;
-  console.log(status, message);
-  res.status(status).send(message);
+  const { status = 500 } = err;
+  //transfered error message and it's value OUT of destructuring in order to pass it on as a variable to error.ejs
+  if (!err.message) err.message = "Something went wrong!";
+  // console.log(status, message);
+  res.status(status);
+  res.render("error", { err });
 });
 
 //testing code
