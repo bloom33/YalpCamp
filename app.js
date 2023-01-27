@@ -16,7 +16,8 @@ const Campground = require("./models/campground");
 const ExpressError = require("./utilities/ExpressError");
 //require wrapAsync
 const wrapAsync = require("./utilities/wrapAsync");
-// const { validate } = require("./models/campground");
+// import joi
+const joi = require("joi");
 
 //Getting default connection to MongoDB
 async function main() {
@@ -46,7 +47,7 @@ app.get("/", (req, res) => {
   res.render("Home");
 });
 
-//route to display Camprounds index page / list of campgrounds
+//Camprounds Index Page Route
 app.get(
   "/campgrounds",
   wrapAsync(async (req, res) => {
@@ -57,13 +58,14 @@ app.get(
   })
 );
 
+//New Campground Form Route
 //remember: don't need an async callback for creating a new item since there is nothing to wait for beforehand
 //NOTE!: The create route needs to come BEFORE the show route, otherwise the server will search - and not find - an item with the id of 'new'
 app.get("/campgrounds/new", (req, res) => {
   res.render("campgrounds/new");
 });
 
-//End point route to submit 'new campground' form to
+//New campground Submit Route (and Redirect)
 app.post(
   "/campgrounds",
   wrapAsync(async (req, res) => {
@@ -76,7 +78,7 @@ app.post(
   })
 );
 
-//routes to details page of a specific campground
+//Campground Details Page Route
 app.get(
   "/campgrounds/:id",
   wrapAsync(async (req, res) => {
@@ -86,7 +88,7 @@ app.get(
   })
 );
 
-//routes to edit page of a specific campground
+//Edit Campground Route
 app.get(
   "/campgrounds/:id/edit",
   wrapAsync(async (req, res) => {
@@ -96,7 +98,7 @@ app.get(
   })
 );
 
-//post edited camprgound route
+//Camprgound Edit Submission Route and Redirect
 app.put(
   "/campgrounds/:id",
   wrapAsync(async (req, res) => {
@@ -111,7 +113,7 @@ app.put(
   })
 );
 
-//Delete route
+//Delete Route
 app.delete(
   "/campgrounds/:id",
   wrapAsync(async (req, res) => {
