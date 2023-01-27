@@ -124,7 +124,7 @@ app.delete(
 
 //For EVERY SINGLE/path request. ORDER = IMPORTANT!
 app.all("*", (req, res, next) => {
-  next(new ExpressError(404, "Page Not Found"));
+  next(new ExpressError("Page Not Found", 404));
 });
 
 //Catch all error route ORDER = IMPORTANT!
