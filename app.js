@@ -10,18 +10,23 @@ const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 //import ejs-mate (to use boilerplate template)
 const ejsMate = require("ejs-mate");
-//require Campground
-const Campground = require("./models/campground");
 //require ExpressError
 const ExpressError = require("./utilities/ExpressError");
 //require wrapAsync
 const wrapAsync = require("./utilities/wrapAsync");
-// import joi
-const joi = require("joi");
+//import joi schema
+const { campgroundSchema, reviewSchema } = require("./schemas");
+//require Campground module
+const Campground = require("./models/campground");
+//require Review module
+const Review = require("./models/reviews");
 
 //Getting default connection to MongoDB
 async function main() {
-  const db = await mongoose.connect("mongodb://127.0.0.1:27017/yelp-camp");
+  const db = await mongoose.connect(
+    "mongodb://127.0.0.1:27017/yelp-camp"
+    // { useNewUrlParser: true, useUnifiedTopology: true, }
+  );
   console.log("CONNECTION OPEN!!!");
 }
 
@@ -41,6 +46,32 @@ app.engine("ejs", ejsMate);
 app.use(express.urlencoded({ extended: true }));
 //Function assigning method-override to perform the request denoted/labeled in the query string by the string provided - i.e. '_method'.
 app.use(methodOverride("_method"));
+
+//*** JOI MIDDLEWARE ***/
+//Function which validates the campground submission form before it reaches mongoose
+const validateCampground = (req, res, next) => {
+  //Next, after schema is defined, pass thorugh values to it.
+  const { error } = campgroundSchema.validate(req.body);
+  if (error) {
+    //map over error details array
+    const msg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(msg, 400);
+  } else {
+    next();
+  }
+};
+//Function which validates the reviews submission form/properties before it reaches mongoose
+const validateReview = (req, res, next) => {
+  //Next, after schema is defined, pass thorugh values to it.
+  const { error } = reviewSchema.validate(req.body);
+  if (error) {
+    //map over error details array
+    const msg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(msg, 400);
+  } else {
+    next();
+  }
+};
 
 //*** CAMPGROUND ROUTES START HERE! !***//
 app.get("/", (req, res) => {
@@ -68,9 +99,11 @@ app.get("/campgrounds/new", (req, res) => {
 //New campground Submit Route (and Redirect)
 app.post(
   "/campgrounds",
+  validateCampground,
   wrapAsync(async (req, res) => {
-    if (!req.body.campground)
-      throw new ExpressError(400, "Invalid Campground Data");
+    //Throws an error message if user attempts to create a new campground without a title.
+    // if (!req.body.campground)throw new ExpressError("Invalid Campground Data", 400);
+
     //The new campground created will be populated by the values input in the body of the form
     const campground = new Campground(req.body.campground);
     await campground.save();
@@ -101,6 +134,7 @@ app.get(
 //Camprgound Edit Submission Route and Redirect
 app.put(
   "/campgrounds/:id",
+  validateCampground,
   wrapAsync(async (req, res) => {
     //Grab the id to pass into findByIdAndUpdate function
     const { id } = req.params;
@@ -124,12 +158,29 @@ app.delete(
   })
 );
 
+//Reviews: Post Route
+app.post(
+  "/campgrounds/:id/reviews",
+  wrapAsync(async (req, res) => {
+    const campground = await Campground.findById(req.params.id);
+    //variable which holds the value of a newly created review written in the form's review body
+    const review = new Review(req.body.review);
+    // add/attach review to specific campground
+    campground.reviews.push(review);
+    // save new review and then "new" campground (i.e. campground w/review attached)
+    await review.save();
+    await campground.save();
+    //redirect back to individual campground show page
+    res.redirect(`/campgrounds/${campground.id}`);
+  })
+);
+
 //For EVERY SINGLE/path request. ORDER = IMPORTANT!
 app.all("*", (req, res, next) => {
   next(new ExpressError("Page Not Found", 404));
 });
 
-//Catch all error route ORDER = IMPORTANT!
+//Catch-all/Default error route ORDER = IMPORTANT - this MUST be last!
 app.use((err, req, res, next) => {
   //destructure from err
   const { status = 500 } = err;

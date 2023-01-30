@@ -11,6 +11,13 @@ const CampgroundSchema = new Schema({
   price: Number,
   description: String,
   location: String,
+  //add a property to hold the object IDs of reviews associated with a specific campground
+  reviews: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Review",
+    },
+  ],
 });
 
 //export the module so it can be imported/required in other files

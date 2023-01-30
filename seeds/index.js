@@ -19,11 +19,10 @@ const db = mongoose.connection;
 //catch any errors with connecting to mongoose
 main().catch((err) => console.log(err));
 
-const randomTitle = (array) =>
-  //function which picks a random name form the arrays in seedHelpers file
-  array[Math.floor(Math.random() * array.length)];
+//function which picks a random name form the arrays in seedHelpers file, set to a variable
+const randomTitle = (array) => array[Math.floor(Math.random() * array.length)];
 
-//
+//Asynchronous function which creates a list of 50 randomized campgrounds
 const seedDB = async () => {
   await Campground.deleteMany({});
   //   const c = new Campground({ title: "pink fields" });
