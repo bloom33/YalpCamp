@@ -23,10 +23,7 @@ const Review = require("./models/reviews");
 
 //Getting default connection to MongoDB
 async function main() {
-  const db = await mongoose.connect(
-    "mongodb://127.0.0.1:27017/yelp-camp"
-    // { useNewUrlParser: true, useUnifiedTopology: true, }
-  );
+  await mongoose.connect("mongodb://127.0.0.1:27017/yelp-camp");
   console.log("CONNECTION OPEN!!!");
 }
 
@@ -116,7 +113,10 @@ app.get(
   "/campgrounds/:id",
   wrapAsync(async (req, res) => {
     // need to look up / find the selected camprgound by id
-    const campground = await Campground.findById(req.params.id);
+    const campground = await Campground.findById(req.params.id).populate(
+      "reviews"
+    );
+    console.log(campground);
     res.render("campgrounds/show", { campground });
   })
 );
