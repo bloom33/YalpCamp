@@ -19,7 +19,7 @@ const { campgroundSchema, reviewSchema } = require("./schemas");
 //require Campground module
 const Campground = require("./models/campground");
 //require Review module
-const Review = require("./models/reviews");
+const Review = require("./models/review");
 
 //Getting default connection to MongoDB
 async function main() {
@@ -158,6 +158,7 @@ app.delete(
   })
 );
 
+//*** REVIEWS ROUTES ***//
 //Reviews: Post Route
 app.post(
   "/campgrounds/:id/reviews",
@@ -172,6 +173,19 @@ app.post(
     await campground.save();
     //redirect back to individual campground show page
     res.redirect(`/campgrounds/${campground.id}`);
+  })
+);
+
+app.delete(
+  //2 IDs are listed in the url because we want to delete the review from the specific campground it's associated with as well as the specific review.
+  "/campgrounds/:id/reviews/:reviewId",
+  wrapAsync(async (req, res) => {
+    //Grab the id to pass into findByIdAndUpdate function
+    const { id, reviewId } = req.params;
+    //$pull operator removes from an existing array all instances of a value(s) that match a specified condition. Thus, this operator will pull the review with the matching reviewId out of the array of reviews array.
+    await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+    await Review.findByIdAndDelete(reviewId);
+    res.redirect(`/campgrounds/${id}`);
   })
 );
 
