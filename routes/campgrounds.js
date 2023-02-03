@@ -53,6 +53,8 @@ router.post(
     //The new campground created will be populated by the values input in the body of the form
     const campground = new Campground(req.body.campground);
     await campground.save();
+    //flash message for creating a new camprgound
+    req.flash("success", "Sucessfully added a new Campground!");
     res.redirect(`/campgrounds/${campground._id}`);
   })
 );

@@ -10,6 +10,10 @@ const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 //import ejs-mate (to use boilerplate template)
 const ejsMate = require("ejs-mate");
+//import Express Sessions
+const session = require("express-session");
+//import flash for flash messages
+const flash = require("connect-flash");
 //require ExpressError
 const ExpressError = require("./utilities/ExpressError");
 //Route(r) imports
@@ -38,6 +42,32 @@ app.engine("ejs", ejsMate);
 app.use(express.urlencoded({ extended: true }));
 //Function assigning method-override to perform the request denoted/labeled in the query string by the string provided - i.e. '_method'.
 app.use(methodOverride("_method"));
+//Function for telling express to serve the 'public' directory and render static files conatained in it
+app.use(express.static(path.join(__dirname, "public")));
+//Function configuring sessions
+const sessionConfig = {
+  secret: "secret",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    //serves as an extra security measure to protect the user's session id from tampering and/or being revealed to the user/a third party
+    httpOnly: true,
+    //setting expiration can be tricky since Date.now() counts in miliseconds only; thus, you need to multiply it by: miliseconds in a min (1000), seconds (60), mins (60), hours (24), week (7) - to get the session last for a week.
+    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  },
+};
+app.use(session(sessionConfig));
+//Function to flash messages
+app.use(flash());
+
+//Middleware which will display flash messages inside the template, universally. NOTE: Placement = important. If you want it to have an effect on all routes, place before the route handlers as is done here.
+app.use((req, res, next) => {
+  //Meaning = in our local files ('locals'), we'll have access to the success flash message, under the key of 'success'. This is so we don't have to pass to individual templates, but can always have access to it by inputting the leyword "success" in play (as in boilerplate.ejs)
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  next();
+});
 
 //*** ROUTING MIDDLEWARE ***//
 app.use("/campgrounds", campgrounds);
