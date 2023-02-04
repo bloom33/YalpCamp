@@ -67,7 +67,11 @@ router.get(
     const campground = await Campground.findById(req.params.id).populate(
       "reviews"
     );
-    console.log(campground);
+    //Add function which will display error message when a specific campground doesn't exist/cannot be found.
+    if (!campground) {
+      req.flash("error", "Cannot find that Camprgound");
+      return res.redirect("/campgrounds");
+    }
     res.render("campgrounds/show", { campground });
   })
 );
@@ -78,6 +82,11 @@ router.get(
   wrapAsync(async (req, res) => {
     // need to look up / find the selected camprgound by id
     const campground = await Campground.findById(req.params.id);
+    //Add function which will display error message when a user attempts to edit a specific campground which doesn't exist/cannot be found.
+    if (!campground) {
+      req.flash("error", "Can't find that Camprgound");
+      return res.redirect("/campgrounds");
+    }
     res.render("campgrounds/edit", { campground });
   })
 );
@@ -94,6 +103,7 @@ router.put(
     const campground = await Campground.findByIdAndUpdate(id, {
       ...req.body.campground,
     });
+    req.flash("success", "Sucessfully updated Campground!");
     res.redirect(`/campgrounds/${campground.id}`);
   })
 );
@@ -105,6 +115,8 @@ router.delete(
     //Grab the id to pass into findByIdAndUpdate function
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
+    //flash message
+    req.flash("success", "Sucessfully deleted Campground!");
     res.redirect("/campgrounds");
   })
 );

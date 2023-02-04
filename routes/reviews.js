@@ -37,6 +37,8 @@ router.post(
     // save new review and then "new" campground (i.e. campground w/review attached)
     await review.save();
     await campground.save();
+    //flash message
+    req.flash("success", "Sucessfully added review!");
     //redirect back to individual campground show page
     res.redirect(`/campgrounds/${campground.id}`);
   })
@@ -51,6 +53,8 @@ router.delete(
     //$pull operator removes from an existing array all instances of a value(s) that match a specified condition. Thus, this operator will pull the review with the matching reviewId out of the array of reviews array.
     await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
     await Review.findByIdAndDelete(reviewId);
+    //flash message
+    req.flash("success", "Sucessfully deleted review!");
     res.redirect(`/campgrounds/${id}`);
   })
 );
