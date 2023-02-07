@@ -8,6 +8,8 @@ const ExpressError = require("../utilities/ExpressError");
 const Campground = require("../models/campground");
 //import joi schema
 const { campgroundSchema } = require("../schemas");
+//Middelware import(s)
+const { isLoggedIn } = require("../middleware");
 
 //*** JOI MIDDLEWARE ***/
 //Function which validates the campground submission form before it reaches mongoose
@@ -38,13 +40,14 @@ router.get(
 //New Campground Form Route
 //remember: don't need an async callback for creating a new item since there is nothing to wait for beforehand
 //NOTE!: The create route needs to come BEFORE the show route, otherwise the server will search - and not find - an item with the id of 'new'
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
   res.render("campgrounds/new");
 });
 
 //New campground Submit Route (and Redirect)
 router.post(
   "/",
+  isLoggedIn,
   validateCampground,
   wrapAsync(async (req, res) => {
     //Throws an error message if user attempts to create a new campground without a title.
@@ -79,6 +82,7 @@ router.get(
 //Edit Campground Route
 router.get(
   "/:id/edit",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     // need to look up / find the selected camprgound by id
     const campground = await Campground.findById(req.params.id);
@@ -94,6 +98,7 @@ router.get(
 //Camprgound Edit Submission Route and Redirect
 router.put(
   "/:id",
+  isLoggedIn,
   validateCampground,
   wrapAsync(async (req, res) => {
     //Grab the id to pass into findByIdAndUpdate function
@@ -111,6 +116,7 @@ router.put(
 //Delete Route
 router.delete(
   "/:id",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     //Grab the id to pass into findByIdAndUpdate function
     const { id } = req.params;
