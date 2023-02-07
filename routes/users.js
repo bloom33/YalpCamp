@@ -57,10 +57,15 @@ router.post(
 );
 
 //Logout route
-router.get("/logout", (req, res) => {
-  req.logout();
-  req.flash("success", "You've successfully logged out.");
-  res.redirect("/campgrounds");
+router.get("/logout", (req, res, next) => {
+  //'.logout()' = Passport generated function/method automatically added to 'req'. Note: It requires a callback function to work
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    req.flash("success", "Successfully logged out. Goodbye!");
+    res.redirect("/campgrounds");
+  });
 });
 
 module.exports = router;
