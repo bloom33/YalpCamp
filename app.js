@@ -82,10 +82,14 @@ passport.deserializeUser(User.deserializeUser());
 //Function to flash messages
 app.use(flash());
 //Middleware which will display flash messages inside the template, universally. NOTE: Placement = important. If you want it to have an effect on all routes, place before the route handlers as is done here.
+//*** LOCALS = things that can be accessed throughout the local files stored in the app by using the keywords ("success", "error", etc)
 app.use((req, res, next) => {
+  console.log(req.session);
   //Meaning = in our local files ('locals'), we'll have access to the success flash message, under the key of 'success'. This is so we don't have to pass to individual templates, but can always have access to it by inputting the leyword "success" in play (as in boilerplate.ejs)
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
+  //for Passport's req.user method to be used to track user access
+  res.locals.user = req.user;
   next();
 });
 

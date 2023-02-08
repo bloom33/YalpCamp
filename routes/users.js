@@ -17,7 +17,7 @@ router.get("/register", (req, res) => {
 //Route to which user reg form is posted
 router.post(
   "/register",
-  wrapAsync(async (req, res) => {
+  wrapAsync(async (req, res, next) => {
     //although 'wrapAsync' automatically trie and catches errors, you can try-catch within it in order to display a customized error message, etc
     try {
       //first: deconstruct / extract what you want from the "form-body"/body of the form
@@ -28,8 +28,14 @@ router.post(
       //Remember to 'await' this step so the app doesn't move on until it's done
       const registeredUser = await User.register(user, password); //note: '.register()' is a Passport method, which will salt and store the password itself, so we don't have to manually do it
 
-      req.flash("success", "Welcome to Yelp Camp!");
-      res.redirect("/campgrounds");
+      //'.login()' =  Passport helper method (like 'logout()) automatically added to the request object/that can be used on the request object
+      //note: requires a callback function
+      //this function logs in a newly registered user, so they don't have to login after having registered, as an extra step
+      req.login(registeredUser, (err) => {
+        if (err) return next(err);
+        req.flash("success", "Welcome to Yelp Camp!");
+        res.redirect("/campgrounds");
+      });
     } catch (e) {
       req.flash("error", e.message);
       res.redirect("/register");
@@ -49,10 +55,15 @@ router.post(
   passport.authenticate("local", {
     failureFlash: true,
     failureRedirect: "/login",
+    keepSessionInfo: true,
   }),
   (req, res) => {
     req.flash("success", "Welcome back!");
-    res.redirect("/campgrounds");
+    //After user has logged in, redirect them to where they left off, IF it's not "/campgrounds", otherwise take them to "/campgrounds"
+    const redirectUrl = req.session.returnTo || "/campgrounds";
+    //
+    delete req.session.returnTo;
+    res.redirect(redirectUrl);
   }
 );
 
