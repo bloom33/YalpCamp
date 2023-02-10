@@ -33,6 +33,8 @@ const seedDB = async () => {
     const random1000 = Math.floor(Math.random() * 1000);
     const price = Math.floor(Math.random() * 20) + 10;
     const camp = new Campground({
+      //manually assigned already created camprgounds to a fictional user's id so to not have issues in the app further down the line.
+      user: "63e327dad300dc47bf60de3c",
       title: `${randomTitle(descriptors)} ${randomTitle(places)}`,
       location: `${cities[random1000].city}, ${cities[random1000].state}`,
       image: "https://source.unsplash.com/collection/483251",

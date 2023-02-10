@@ -20,6 +20,8 @@
                             <li class="list-group-item text-muted">
                                 <%= campground.location %>
                             </li>
+                            <li class="list-group-item"> Submitted by: <%= campground.user.username %>
+                            </li>
                             <li class="list-group-item"> $<%= campground.price %> per night </li>
                         </ul>
 

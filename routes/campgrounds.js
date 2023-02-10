@@ -55,6 +55,8 @@ router.post(
 
     //The new campground created will be populated by the values input in the body of the form
     const campground = new Campground(req.body.campground);
+    //Now that we have authorization incorporated, we can assign a user/user id to a newly created campground, using the 'req.user' added by Passport
+    campground.user = req.user_id;
     await campground.save();
     //flash message for creating a new camprgound
     req.flash("success", "Sucessfully added a new Campground!");
@@ -67,9 +69,10 @@ router.get(
   "/:id",
   wrapAsync(async (req, res) => {
     // need to look up / find the selected camprgound by id
-    const campground = await Campground.findById(req.params.id).populate(
-      "reviews"
-    );
+    const campground = await Campground.findById(req.params.id)
+      .populate("reviews")
+      .populate("user");
+    // console.log(campground);
     //Add function which will display error message when a specific campground doesn't exist/cannot be found.
     if (!campground) {
       req.flash("error", "Cannot find that Camprgound");

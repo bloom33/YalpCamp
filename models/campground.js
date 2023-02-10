@@ -14,6 +14,10 @@ const CampgroundSchema = new Schema({
   price: Number,
   description: String,
   location: String,
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   //add a property to hold the object IDs of reviews associated with a specific campground
   reviews: [
     {
