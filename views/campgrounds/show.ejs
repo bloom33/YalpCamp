@@ -24,18 +24,27 @@
                             </li>
                             <li class="list-group-item"> $<%= campground.price %> per night </li>
                         </ul>
+                        <%# if there is a current user (user) AND the id of creator of the Campground is equivalent to
+                            the id of the current logged in user, then allow them to delete/modify the campground they
+                            created. %>
+                            <% if(user && campground.user.equals(user._id)) { %>
+                                <%# beginning of JS if/else statement function %>
 
-                        <div class="card-body">
-                            <a class="card-link btn btn-secondary" href="/campgrounds/<%=campground._id%>/edit">Edit</a>
-                            <form class="d-inline" action="/campgrounds/<%=campground._id%>?_method=DELETE"
-                                method="POST"">
+                                    <div class="card-body">
+                                        <a class="card-link btn btn-secondary"
+                                            href="/campgrounds/<%=campground._id%>/edit">Edit</a>
+                                        <form class="d-inline" action="/campgrounds/<%=campground._id%>?_method=DELETE"
+                                            method="POST"">
                         <button class=" card-link btn btn-danger">DELETE</button>
-                            </form>
-                        </div>
+                                        </form>
+                                    </div>
 
-                        <div class="card-footer text-muted">
-                            2 days ago
-                        </div>
+                                    <% } %>
+                                        <%# end of JS if/else statement function %>
+
+                                            <div class="card-footer text-muted">
+                                                2 days ago
+                                            </div>
                     </div>
                     <%# campground display card ends %>
 
