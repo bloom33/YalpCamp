@@ -56,7 +56,7 @@ router.post(
     //The new campground created will be populated by the values input in the body of the form
     const campground = new Campground(req.body.campground);
     //Now that we have authorization incorporated, we can assign a user/user id to a newly created campground, using the 'req.user' added by Passport
-    campground.user = req.user_id;
+    campground.user = req.user._id;
     await campground.save();
     //flash message for creating a new camprgound
     req.flash("success", "Sucessfully added a new Campground!");
