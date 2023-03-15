@@ -2,30 +2,18 @@ const express = require("express");
 const router = express.Router();
 //require wrapAsync
 const wrapAsync = require("../utilities/wrapAsync");
-//require ExpressError
-const ExpressError = require("../utilities/ExpressError");
+
 //require Campground module
 const Campground = require("../models/campground");
-//import joi schema
-const { campgroundSchema } = require("../schemas");
+
 //Middelware import(s)
-const { isLoggedIn } = require("../middleware");
+const {
+  isLoggedIn,
+  validateCampground,
+  isAuthorized,
+} = require("../middleware");
 
-//*** JOI MIDDLEWARE ***/
-//Function which validates the campground submission form before it reaches mongoose
-const validateCampground = (req, res, next) => {
-  //Next, after schema is defined, pass thorugh values to it.
-  const { error } = campgroundSchema.validate(req.body);
-  if (error) {
-    //map over error details array
-    const msg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(msg, 400);
-  } else {
-    next();
-  }
-};
-
-//routes
+//*** ROUTES ***/
 //Camprounds Index Page Route
 router.get(
   "/",
@@ -86,14 +74,17 @@ router.get(
 router.get(
   "/:id/edit",
   isLoggedIn,
+  isAuthorized,
   wrapAsync(async (req, res) => {
+    const { id } = req.params;
     // need to look up / find the selected camprgound by id
-    const campground = await Campground.findById(req.params.id);
+    const campground = await Campground.findById(id);
     //Add function which will display error message when a user attempts to edit a specific campground which doesn't exist/cannot be found.
     if (!campground) {
       req.flash("error", "Can't find that Camprgound");
       return res.redirect("/campgrounds");
     }
+
     res.render("campgrounds/edit", { campground });
   })
 );
@@ -102,15 +93,18 @@ router.get(
 router.put(
   "/:id",
   isLoggedIn,
+  isAuthorized,
   validateCampground,
   wrapAsync(async (req, res) => {
     //Grab the id to pass into findByIdAndUpdate function
     const { id } = req.params;
+
     //Note: when using findByIdAndUpdate(), remember to pass in two parameters: the id of the item being updated - and - the properties being updated
     //Use the spread operator to populate campground item with the values from the form which match the respective keys located in the item object
     const campground = await Campground.findByIdAndUpdate(id, {
       ...req.body.campground,
     });
+    // }); //CANCELED CODE END (2/27/23): we are deleting / rewriting this code for authorization purposes; to make sure that no-one but the authorized creator of a camprgound, can alter/edit it. Thus, we need to FIND the campground's id first, check to see if the current user has the authority/authorization to edit the current campground, then allow editing capabilities if they are.
     req.flash("success", "Sucessfully updated Campground!");
     res.redirect(`/campgrounds/${campground.id}`);
   })
@@ -120,9 +114,11 @@ router.put(
 router.delete(
   "/:id",
   isLoggedIn,
+  isAuthorized,
   wrapAsync(async (req, res) => {
     //Grab the id to pass into findByIdAndUpdate function
     const { id } = req.params;
+
     await Campground.findByIdAndDelete(id);
     //flash message
     req.flash("success", "Sucessfully deleted Campground!");

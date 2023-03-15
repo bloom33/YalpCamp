@@ -8,22 +8,9 @@ const ExpressError = require("../utilities/ExpressError");
 const Campground = require("../models/campground");
 //require Review module
 const Review = require("../models/review");
-//import joi schema
-const { reviewSchema } = require("../schemas");
 
-//*** JOI MIDDLEWARE ***/
-//Function which validates the reviews submission form/properties before it reaches mongoose
-const validateReview = (req, res, next) => {
-  //Next, after schema is defined, pass thorugh values to it.
-  const { error } = reviewSchema.validate(req.body);
-  if (error) {
-    //map over error details array
-    const msg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(msg, 400);
-  } else {
-    next();
-  }
-};
+//Middelware import(s)
+const { validateReview } = require("../middleware");
 
 //Reviews: Post Route
 router.post(
