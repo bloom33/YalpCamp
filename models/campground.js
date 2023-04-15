@@ -14,6 +14,7 @@ const CampgroundSchema = new Schema({
   price: Number,
   description: String,
   location: String,
+  //a reference to a user instance
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",

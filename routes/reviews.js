@@ -10,19 +10,23 @@ const Campground = require("../models/campground");
 const Review = require("../models/review");
 
 //Middelware import(s)
-const { validateReview } = require("../middleware");
+const { validateReview, isLoggedIn } = require("../middleware");
 
 //Reviews: Post Route
 router.post(
   "/",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     //variable which holds the value of a newly created review written in the form's review body
     const review = new Review(req.body.review);
+    //connects/attaches the review to the logged in user.
+    review.user = req.user._id;
     // add/attach review to specific campground
     campground.reviews.push(review);
     // save new review and then "new" campground (i.e. campground w/review attached)
     await review.save();
+    //we save the campground as well because we are storing a reference to the review in the camprgounds array, called 'reviews'.
     await campground.save();
     //flash message
     req.flash("success", "Sucessfully added review!");

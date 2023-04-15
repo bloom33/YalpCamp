@@ -6,6 +6,11 @@ const Schema = mongoose.Schema;
 const reviewSchema = new Schema({
   body: String,
   rating: Number,
+  //a reference to a user instance
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 //export the module so it can be imported/required in other files
