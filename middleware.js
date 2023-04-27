@@ -4,6 +4,8 @@ const { campgroundSchema, reviewSchema } = require("./schemas");
 const ExpressError = require("./utilities/ExpressError");
 //require Campground module
 const Campground = require("./models/campground");
+//require Review module
+const Review = require("./models/review");
 //import joi schema
 
 //Middleware function which checks whether or not a user is authenticated before allowing them to access to specified sections of the site
@@ -62,4 +64,19 @@ module.exports.validateReview = (req, res, next) => {
   } else {
     next();
   }
+};
+
+//Middleware to check if current user is authorized to alter a review
+module.exports.isReviewAuthor = async (req, res, next) => {
+  //Grab the id of the review, to pass into findByIdAndUpdate function
+  const { id, reviewId } = req.params;
+  //find the campground first
+  const review = await Review.findById(reviewId);
+  //check if the current user has the authorization to edit the current review, and if they don't, redirect them
+  if (!review.user.equals(req.user._id)) {
+    req.flash("error", "You don't have authorization to do that.");
+    return res.redirect(`/campgrounds/${id}`);
+  }
+
+  next();
 };

@@ -87,11 +87,15 @@
                                                     review.user.username %>
                                             </h6>
 
-
-                                            <form
-                                                action="/campgrounds/<%= campground._id %>/reviews/<%=review._id%>?_method=DELETE"
-                                                method="POST"> <button class=" btn btn-sm btn-danger">DELETE</button>
-                                            </form>
+                                            <% if(user && review.user.equals(user._id)) { %>
+                                                <%# beginning of JS if/else statement function %>
+                                                    <form
+                                                        action="/campgrounds/<%= campground._id %>/reviews/<%=review._id%>?_method=DELETE"
+                                                        method="POST"> <button
+                                                            class=" btn btn-sm btn-danger">DELETE</button>
+                                                    </form>
+                                                    <% } %>
+                                                        <%# end of JS if/else statement function %>
                                         </div>
                                     </div>
                                     <% } %>

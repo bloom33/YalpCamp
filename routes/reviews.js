@@ -10,7 +10,7 @@ const Campground = require("../models/campground");
 const Review = require("../models/review");
 
 //Middelware import(s)
-const { validateReview, isLoggedIn } = require("../middleware");
+const { validateReview, isLoggedIn, isReviewAuthor } = require("../middleware");
 
 //Reviews: Post Route
 router.post(
@@ -38,6 +38,8 @@ router.post(
 router.delete(
   //2 IDs are listed in the url because we want to delete the review from the specific campground it's associated with as well as the specific review.
   "/:reviewId",
+  isLoggedIn,
+  isReviewAuthor,
   wrapAsync(async (req, res) => {
     //Grab the id to pass into findByIdAndUpdate function
     const { id, reviewId } = req.params;
