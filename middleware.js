@@ -1,9 +1,10 @@
 //import joi schema
-const { campgroundSchema } = require("./schemas");
+const { campgroundSchema, reviewSchema } = require("./schemas");
 //require ExpressError
 const ExpressError = require("./utilities/ExpressError");
 //require Campground module
 const Campground = require("./models/campground");
+//import joi schema
 
 //Middleware function which checks whether or not a user is authenticated before allowing them to access to specified sections of the site
 module.exports.isLoggedIn = (req, res, next) => {

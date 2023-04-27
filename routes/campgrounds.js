@@ -58,9 +58,10 @@ router.get(
   wrapAsync(async (req, res) => {
     // need to look up / find the selected camprgound by id
     const campground = await Campground.findById(req.params.id)
-      .populate("reviews")
+      //populates all reviews for the specific campground being found/viewed, then populate onto each oneof them their author, then - sparately - populate the one author of the campground.
+      .populate({ path: "reviews", populate: { path: "user" } })
       .populate("user");
-    // console.log(campground);
+    console.log(campground); //test
     //Add function which will display error message when a specific campground doesn't exist/cannot be found.
     if (!campground) {
       req.flash("error", "Cannot find that Camprgound");
