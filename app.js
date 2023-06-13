@@ -100,7 +100,7 @@ app.use("/", userRoutes);
 
 //*** ROUTES START HERE! !***//
 app.get("/", (req, res) => {
-  res.render("Home");
+  res.render("home");
 });
 
 //*** ERROR ROUTES ***//
