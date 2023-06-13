@@ -8,6 +8,15 @@ const Campground = require("./models/campground");
 const Review = require("./models/review");
 //import joi schema
 
+//New code added due to Passport.js security updates. (6/13/2023)
+//Code which stores / retrieves the user's previous session after they login again i.e. it saves the returnTo value from the session (req.session.returnTo) to res.locals:
+module.exports.storeReturnTo = (req, res, next) => {
+  if (req.session.returnTo) {
+    res.locals.returnTo = req.session.returnTo;
+  }
+  next();
+};
+
 //Middleware function which checks whether or not a user is authenticated before allowing them to access to specified sections of the site
 module.exports.isLoggedIn = (req, res, next) => {
   //Passport automatically includes a method - '.user()' which automatically fills the request body with necessary info to identify a user based on stored data
