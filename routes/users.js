@@ -38,6 +38,7 @@ router
     }),
 
     // users.login --- deprecated / deleted code due to Passport.js update. New / Replacement code below:
+
     // Now we can use res.locals.returnTo to redirect the user after login
     (req, res) => {
       req.flash("success", "Welcome back!");
