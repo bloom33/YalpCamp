@@ -16,17 +16,19 @@ module.exports.newForm = (req, res) => {
 
 //Creating /Submitting New Campground Info
 module.exports.newCamp = async (req, res) => {
-  //Throws an error message if user attempts to create a new campground without a title.
-  // if (!req.body.campground)throw new ExpressError("Invalid Campground Data", 400);
-
   //The new campground created will be populated by the values input in the body of the form
   const campground = new Campground(req.body.campground);
+  //Maps over array of files added to cloudinary through multer and for every item/img in the array, grab path and filename and put them in an array
+  campground.images = req.files.map((f) => ({ url: f.path, filename: f.filename }));
   //Now that we have authorization incorporated, we can assign a user/user id to a newly created campground, using the 'req.user' added by Passport
   campground.user = req.user._id;
   await campground.save();
+  console.log(campground);
   //flash message for creating a new camprgound
   req.flash("success", "Sucessfully added a new Campground!");
   res.redirect(`/campgrounds/${campground._id}`);
+
+  //CANCELED CODE: if (!req.body.campground)throw new ExpressError("Invalid Campground Data", 400); //Throws an error message if user attempts to create a new campground without a title.
 };
 
 //Diplays a Camp's Details

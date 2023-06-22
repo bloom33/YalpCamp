@@ -12,8 +12,10 @@ cloudinary.config({
 //Essentially CloudinaryStorage is configured with the proper credntials for my specific cloudinary account (in above code) and, below, are the specific folder in that account in which I'd like things stored and info on the allowed formats of the files uploaded through the app
 const storage = new CloudinaryStorage({
   cloudinary,
-  folder: "YelpCamp", //the folder in cloudinary that we will store things in
-  allowedFormats: ["jpeg", "jpg", "png"],
+  params: {
+    folder: "YelpCamp", //the folder in cloudinary that we will store things in
+    allowedFormats: ["jpeg", "jpg", "png"],
+  },
 });
 
 module.exports = { cloudinary, storage };

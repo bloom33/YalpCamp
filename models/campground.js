@@ -1,4 +1,5 @@
 //"import"/require mongoose
+const { string } = require("joi");
 const mongoose = require("mongoose");
 const { reviewSchema } = require("../schemas");
 //a variable/reference for easily accessing or referring to the Schema property in mongoose in order to quickly reference it in code.
@@ -10,9 +11,14 @@ const Review = require("./review.js");
 //Note the use of 'Schema' instead of 'mongoose.Schema'
 const CampgroundSchema = new Schema({
   title: String,
-  image: String,
-  price: Number,
+  images: [
+    {
+      url: String,
+      filename: String,
+    },
+  ],
   description: String,
+  price: Number,
   location: String,
   //a reference to a user instance
   user: {

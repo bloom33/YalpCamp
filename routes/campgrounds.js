@@ -27,14 +27,15 @@ router
   //Camprounds Index Page Route
   .get(wrapAsync(campgrounds.index))
   //New campground Submit Route (and Redirect)
-  // .post(isLoggedIn, validateCampground, wrapAsync(campgrounds.newCamp));
+  .post(isLoggedIn, upload.array("image"), validateCampground, wrapAsync(campgrounds.newCamp));
 
-  //updload.single() = Multer function which will grab the file in the field labeled/named 'image' in the New Campground form and add that file to Multer to parse
-  .post(upload.array("image"), (req, res) => {
-    console.log(req.body, req.files);
-    res.send("It worked!");
-    // res.send(req.body, req.file);
-  });
+//updload.single/array() = Multer function which will grab the file in the field labeled/named 'image' in the New Campground form and add that file to Multer to parse
+
+// .post(upload.array("image"), (req, res) => {
+//   console.log(req.body, req.files);
+//   res.send("It worked!");
+//   // res.send(req.body, req.file);
+// });
 
 //New Campground Form Route
 //remember: don't need an async callback for creating a new item since there is nothing to wait for beforehand
