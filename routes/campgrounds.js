@@ -11,6 +11,13 @@ const Campground = require("../models/campground");
 const { isLoggedIn, validateCampground, isAuthorized } = require("../middleware");
 const campground = require("../models/campground");
 
+//Cloudinary - for storing img uploads
+//Note: you don't have to put '/index' as Node will automatically look for an index file in a folder.
+const { storage } = require("../cloudinary/index");
+//Multer - for 'multiple/form-data' parsing
+const multer = require("multer");
+const upload = multer({ storage }); //instructing Multer to store data parsed from form in storage object created in cloudinary folder and/or file.
+
 //*** ROUTES ***/
 //Use 'router.route' to group routes and further consolidate and clean up code.
 
@@ -20,7 +27,14 @@ router
   //Camprounds Index Page Route
   .get(wrapAsync(campgrounds.index))
   //New campground Submit Route (and Redirect)
-  .post(isLoggedIn, validateCampground, wrapAsync(campgrounds.newCamp));
+  // .post(isLoggedIn, validateCampground, wrapAsync(campgrounds.newCamp));
+
+  //updload.single() = Multer function which will grab the file in the field labeled/named 'image' in the New Campground form and add that file to Multer to parse
+  .post(upload.array("image"), (req, res) => {
+    console.log(req.body, req.files);
+    res.send("It worked!");
+    // res.send(req.body, req.file);
+  });
 
 //New Campground Form Route
 //remember: don't need an async callback for creating a new item since there is nothing to wait for beforehand

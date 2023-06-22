@@ -1,3 +1,10 @@
+//dotenv req
+//'process.env.NODE_ENV' = an environment variable that usually in development / production. Whilst coding, we have been running in development, but upon deployment, we will be running in 'production'.
+//Thus, we're saying here, that while we're in development mode, use / require dotenv in orde to access info in the .env file.
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+
 //require/"import" express
 const express = require("express");
 //assign express function execution to a variable
