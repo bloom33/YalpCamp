@@ -48,7 +48,7 @@ router
   //Campground Details Page Route
   .get(wrapAsync(campgrounds.showCamp))
   //Camprgound Edit Submission Route and Redirect
-  .put(isLoggedIn, isAuthorized, validateCampground, wrapAsync(campgrounds.updateCamp))
+  .put(isLoggedIn, isAuthorized, upload.array("image"), validateCampground, wrapAsync(campgrounds.updateCamp))
   //Delete Route
   .delete(isLoggedIn, isAuthorized, wrapAsync(campgrounds.deleteCamp));
 

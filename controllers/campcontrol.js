@@ -71,6 +71,11 @@ module.exports.updateCamp = async (req, res) => {
   const campground = await Campground.findByIdAndUpdate(id, {
     ...req.body.campground,
   });
+  // variable: Maps over array of files added to cloudinary through multer and for every item/img in the array, grab path and filename and put them in an array
+  const imgs = req.files.map((f) => ({ url: f.path, filename: f.filename }));
+
+  campground.images.push(...imgs); //adding 'push()' = not erasing imgs already saved but adding new ones.
+  await campground.save(); //save new campground with pushed / added images.
   // }); //CANCELED CODE END (2/27/23): we are deleting / rewriting this code for authorization purposes; to make sure that no-one but the authorized creator of a camprgound, can alter/edit it. Thus, we need to FIND the campground's id first, check to see if the current user has the authority/authorization to edit the current campground, then allow editing capabilities if they are.
   req.flash("success", "Sucessfully updated Campground!");
   res.redirect(`/campgrounds/${campground.id}`);

@@ -2,8 +2,9 @@
     <div class="row">
         <h1 class="text-center">Edit Campground</h1>
         <div class="col-6 offset-3">
-            <form action="/campgrounds/<%=campground._id%>?_method=PUT" method="POST" class="validated-form" novalidate>
-                <div class="mb-3">
+            <form action="/campgrounds/<%=campground._id%>?_method=PUT" method="POST" class="validated-form" novalidate
+                enctype="multipart/form-data">
+                <div class=" mb-3">
                     <label class="form-label" for="titile">Title: </label>
                     <input type="text" class="form-control" name="campground[title]" id="titile"
                         value="<%= campground.title %>" required>
@@ -36,12 +37,14 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="image">Image Url: </label>
-                    <input type="text" class="form-control" name="campground[image]" id="image"
-                        value="<%= campground.image %>" required>
-                    <div class="valid-feedback">
-                        Looks good!
-                    </div>
+                    <label class="form-label" for="image">Add Images </label>
+                    <%# image input Note: 'multiple' attribute allows users to upload multiple image files%>
+                        <input type="file" name="image" id="image" multiple>
+                        <!-- <input type="text" class="form-control" name="campground[image]" id="image" value="<%= campground.image %>"
+                required>
+            <div class="valid-feedback">
+                Looks good!
+            </div> -->
                 </div>
 
                 <div class="mb-3">
