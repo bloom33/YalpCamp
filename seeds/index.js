@@ -37,10 +37,18 @@ const seedDB = async () => {
       user: "63e327dad300dc47bf60de3c",
       title: `${randomTitle(descriptors)} ${randomTitle(places)}`,
       location: `${cities[random1000].city}, ${cities[random1000].state}`,
-      image: "https://source.unsplash.com/collection/483251",
-      description:
-        " Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam minus optio temporibus explicabo unde! Assumenda accusantium eius ab, reiciendis molestias officiis iusto recusandae, excepturi aut a mollitia voluptate. Quas, fugiat? Quod perspiciatis ea veritatis, mollitia praesentium porro inventore nemo cum! Porro eligendi sapiente delectus eum aspernatur nisi beatae, architecto rem, soluta quia officia. Exercitationem recusandae illo corrupti dignissimos labore ea?",
+      description: " Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam minus optio temporibus explicabo unde! Assumenda accusantium eius ab, reiciendis molestias officiis iusto recusandae, excepturi aut a mollitia voluptate. Quas, fugiat? Quod perspiciatis ea veritatis, mollitia praesentium porro inventore nemo cum! Porro eligendi sapiente delectus eum aspernatur nisi beatae, architecto rem, soluta quia officia. Exercitationem recusandae illo corrupti dignissimos labore ea?",
       price: price,
+      images: [
+        {
+          url: "https://res.cloudinary.com/doleu5ock/image/upload/v1687469345/YelpCamp/tcyjd8esfhgacujlpd5b.png",
+          filename: "YelpCamp/tcyjd8esfhgacujlpd5b",
+        },
+        {
+          url: "https://res.cloudinary.com/doleu5ock/image/upload/v1687469351/YelpCamp/gxqbntd9ewc2xfdtqgih.png",
+          filename: "YelpCamp/gxqbntd9ewc2xfdtqgih",
+        },
+      ],
     });
     //save the newly created camp AFTER its newly assigned values of city and state are created in the loop function above
     await camp.save();
