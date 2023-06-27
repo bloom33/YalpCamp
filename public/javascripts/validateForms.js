@@ -2,6 +2,9 @@
 (() => {
   "use strict";
 
+  //code necessary for script tag in boilerplate, (with 'bs-custom...' code) to get the script code to do its job in displaying the file names of multiple image files
+  bsCustomFileInput.init();
+
   // Fetch all the forms we want to apply custom Bootstrap validation styles to
   const forms = document.querySelectorAll(".validated-form");
 

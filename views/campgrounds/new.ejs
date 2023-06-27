@@ -32,8 +32,14 @@
                     </div>
                 </div>
 
-                <%# image input Note: 'multiple' attribute allows users to upload multiple image files%>
-                    <input type="file" name="image" id="image" multiple>
+                <%# more specific file picking input, from Bootstrap %>
+                    <div class="input-group mb-3 custom-file">
+                        <input type="file" class="form-control custom-file-label" id="image" name="image" multiple>
+                        <%# image input Note: 'multiple' attribute allows users to upload multiple image files%>
+                            <label class="input-group-text" for="image">Upload</label>
+                    </div>
+
+
                     <!-- <div class="mb-3">
                         <label class="form-label" for="image">Image Url: </label>
                         <input type="text" class="form-control" name="campground[image]" id="image" required>

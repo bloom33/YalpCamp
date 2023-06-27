@@ -36,7 +36,14 @@
                     </div>
                 </div>
 
-                <div class="mb-3">
+                <%# more specific file picking input, from Bootstrap %>
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" id="image" name="image" multiple>
+                        <%# image input Note: 'multiple' attribute allows users to upload multiple image files%>
+                            <label class="input-group-text" for="image">Upload</label>
+                    </div>
+
+                    <!-- <div class="mb-3">
                     <label class="form-label" for="image">Add Images </label>
                     <%# image input Note: 'multiple' attribute allows users to upload multiple image files%>
                         <input type="file" name="image" id="image" multiple>
@@ -45,20 +52,20 @@
             <div class="valid-feedback">
                 Looks good!
             </div> -->
-                </div>
+                    <!-- </div> -->
 
-                <div class="mb-3">
-                    <label class="form-label" for="description">Description: </label>
-                    <textarea type="text" class="form-control" name="campground[description]" id="description"
-                        required> <%= campground.description %> </textarea>
-                    <div class="valid-feedback">
-                        Looks good!
+                    <div class="mb-3">
+                        <label class="form-label" for="description">Description: </label>
+                        <textarea type="text" class="form-control" name="campground[description]" id="description"
+                            required> <%= campground.description %> </textarea>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
                     </div>
-                </div>
 
-                <div class="mb-3">
-                    <button class="btn btn-info">Submit Changes</button>
-                </div>
+                    <div class="mb-3">
+                        <button class="btn btn-info">Submit Changes</button>
+                    </div>
             </form>
 
             <a href=" /campgrounds/<%= campground._id %>">Back to Campground</a>
