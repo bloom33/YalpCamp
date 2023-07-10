@@ -34,9 +34,27 @@
                         <script src="/scripts/validateForms.js"></script>
 
 
-                        <%# including the addFileNames function so it can be accessed / used in the pages where the
+                        <!-- <%# including the addFileNames function so it can be accessed / used in the pages where the
                             boilerplate is included %>
-                            <script src="/javascripts/addFileNames.js"></script>
+                            <script src="/javascripts/addFileNames.js"></script> -->
+
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+                        <script>$(".form-control").on("change", function () {
+                                const form = document.querySelector('.form-control');
+                                form.innerHTML = "";
+                                let files = Array.from(this.files)
+                                updatedFiles = files.map(f => { return f.name });
+                                for (let i = 0; i < updatedFiles.length; i++) {
+                                    if (updatedFiles[i].length > 15) {
+                                        updatedFiles[i] = updatedFiles[i].slice(0, 9).concat(`...${updatedFiles[i].slice(-6)}`)
+                                    }
+                                }
+                                let fileName = updatedFiles.join(", ")
+                                if (files.length > 1) {
+                                    return $(this).siblings(".form-label").addClass("selected").html(fileName)
+                                }
+                            });
+                        </script>
 
 
 </body>

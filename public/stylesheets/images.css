@@ -1,4 +1,4 @@
-#formFile {
+/* #formFile {
   display: flex;
   flex-wrap: wrap;
   height: auto;
@@ -13,4 +13,4 @@
 
 #formFile img:not(:last-child) {
   margin-right: 5px;
-}
+} */
