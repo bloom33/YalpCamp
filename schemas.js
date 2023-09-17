@@ -11,6 +11,7 @@ module.exports.campgroundSchema = Joi.object({
     // image: Joi.string().required(),
     description: Joi.string().required(),
   }).required(),
+  deleteImages: Joi.array(),
 });
 
 //Joi will validate form data before beginning to save another review, using mongoose:

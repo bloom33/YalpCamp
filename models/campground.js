@@ -7,16 +7,22 @@ const Schema = mongoose.Schema;
 //require Review module
 const Review = require("./review.js");
 
+const ImageSchema = new Schema({
+  url: String,
+  filename: String,
+});
+
+//after setting up the images info into a new Schema, use the virtual() tool.
+ImageSchema.virtual("thumbnail").get(function () {
+  //this stores the url instead of the entire / actual file of the image; thus, keeping the functionality of resizing the images lightweight
+  return this.url.replace("/upload", "/upload/w_200");
+});
+
 //Create new schema.
 //Note the use of 'Schema' instead of 'mongoose.Schema'
 const CampgroundSchema = new Schema({
   title: String,
-  images: [
-    {
-      url: String,
-      filename: String,
-    },
-  ],
+  images: [ImageSchema],
   description: String,
   price: Number,
   location: String,

@@ -33,7 +33,7 @@
                         <input type="text" class="form-control" name="campground[price]" id="price" placeholder="0.00"
                             aria-label="Price (to the nearest dollar)" aria-describedby="price-label"
                             value="<%= campground.price %>" required>
-                        <span class="input-group-text">.00</span>
+                        <!-- <span class="input-group-text">.00</span> Note: unnecesary text since it's in 'placeholder' -->
                         <div class="valid-feedback">
                             Looks good!
                         </div>
@@ -44,7 +44,7 @@
 
                     <%# more specific file picking input, from Bootstrap %>
                         <div class="mb-3">
-                            <label for="image" class="form-label">Choose image(s)</label>
+                            <label for="image" class="form-label">Add more image(s)</label>
                             <input class="form-control" type="file" id="image" name="image" multiple>
                             <div class="mt-3" id="formFile"></div>
                         </div>
@@ -75,7 +75,22 @@
                                     Looks good!
                                 </div>
                             </div>
-
+                            <div class="mb-3">
+                                <% campground.images.forEach(function(img, i) {%>
+                                    <%# first display already uploaded images %>
+                                        <img src="<%= img.thumbnail %>" class="img-thumbnail" alt="">
+                                        <%# for check boxes next to each image %>
+                                            <div class="form-check-inline">
+                                                <%# Note: the 'value' attribute is the specified value of the image
+                                                    that'll help identify and delete it, server-side. %>
+                                                    <input type="checkbox" id="image-<%=i%>" name="deleteImages[]"
+                                                        value="<%= img.filename %>">
+                                            </div>
+                                            <%# Note: 'for' attribute assigns label to designated input type, in this
+                                                case, a designated checkbox; the one with a matching id. %>
+                                                <label for="image-<%=i%>">Delete?</label>
+                                                <% } )%>
+                            </div>
                             <div class="mb-3">
                                 <button class="btn btn-info">Submit Changes</button>
                             </div>

@@ -37,6 +37,7 @@ const userRoutes = require("./routes/users");
 //*** MONGOOSE / DATABASE CONNECTION SET-UP ***//
 //Getting default connection to MongoDB
 async function main() {
+  mongoose.set("strictQuery", true); // in order to get rid of the 'strictQuery' warning message when connecting
   await mongoose.connect("mongodb://127.0.0.1:27017/yelp-camp");
   console.log("CONNECTION OPEN!!!");
 }

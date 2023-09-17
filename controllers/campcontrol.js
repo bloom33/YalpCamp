@@ -1,5 +1,7 @@
 //require Campground module
+const e = require("connect-flash");
 const Campground = require("../models/campground");
+const { cloudinary } = require("../cloudinary");
 
 //Index of Campgrounds
 module.exports.index = async (req, res) => {
@@ -65,7 +67,7 @@ module.exports.editCamp = async (req, res) => {
 module.exports.updateCamp = async (req, res) => {
   //Grab the id to pass into findByIdAndUpdate function
   const { id } = req.params;
-
+  console.log(req.body);
   //Note: when using findByIdAndUpdate(), remember to pass in two parameters: the id of the item being updated - and - the properties being updated
   //Use the spread operator to populate campground item with the values from the form which match the respective keys located in the item object
   const campground = await Campground.findByIdAndUpdate(id, {
@@ -77,6 +79,16 @@ module.exports.updateCamp = async (req, res) => {
   campground.images.push(...imgs); //adding 'push()' = not erasing imgs already saved but adding new ones.
   await campground.save(); //save new campground with pushed / added images.
   // }); //CANCELED CODE END (2/27/23): we are deleting / rewriting this code for authorization purposes; to make sure that no-one but the authorized creator of a camprgound, can alter/edit it. Thus, we need to FIND the campground's id first, check to see if the current user has the authority/authorization to edit the current campground, then allow editing capabilities if they are.
+
+  if (req.body.deleteImages) {
+    //after checking if there are images to be deleted, loop over the images, and delete the ones with matching filenames form cloudinary database
+    for (let filename of req.body.deleteImages) {
+      await cloudinary.uploader.destroy(filename);
+    }
+    //$pull operator = how we pull things out of an array
+    await campground.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } });
+    console.log(campground);
+  }
   req.flash("success", "Sucessfully updated Campground!");
   res.redirect(`/campgrounds/${campground.id}`);
 };
